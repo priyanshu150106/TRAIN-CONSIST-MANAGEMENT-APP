@@ -1,14 +1,19 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 // Bogie Class
 class Bogie {
+    private int id;
     private String type;
     private int capacity;
 
-    public Bogie(String type, int capacity) {
+    public Bogie(int id, String type, int capacity) {
+        this.id = id;
         this.type = type;
         this.capacity = capacity;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getType() {
@@ -20,11 +25,13 @@ class Bogie {
     }
 }
 
-// Main Application Class
+// Main Class
 public class TrainConsistManagementApp {
 
-    // Train consist (list of bogies)
     static List<Bogie> train = new ArrayList<>();
+
+    // UC4: TreeSet maintains sorted unique IDs
+    static SortedSet<Integer> bogieIds = new TreeSet<>();
 
     public static void main(String[] args) {
 
@@ -32,25 +39,53 @@ public class TrainConsistManagementApp {
 
         initializeTrain();
 
+        // Add bogies (unordered input)
+        addPassengerBogie(105, 72);
+        addPassengerBogie(101, 72);
+        addPassengerBogie(103, 60);
+        addPassengerBogie(101, 80); // duplicate
+
         displayConsistSummary();
     }
 
-    // UC1: Initialize Train
+    // UC1
     public static void initializeTrain() {
-        train.clear(); // ensures train is empty
+        train.clear();
+        bogieIds.clear();
         System.out.println("Train initialized successfully.");
     }
 
-    // UC1: Display Summary
+    // UC2 + UC3 + UC4
+    public static void addPassengerBogie(int id, int capacity) {
+
+        // TreeSet also prevents duplicates
+        if (bogieIds.contains(id)) {
+            System.out.println("❌ Bogie ID " + id + " already exists.");
+            return;
+        }
+
+        Bogie bogie = new Bogie(id, "Passenger", capacity);
+        train.add(bogie);
+        bogieIds.add(id);
+
+        System.out.println("✅ Added Bogie | ID: " + id + " | Capacity: " + capacity);
+    }
+
+    // Summary
     public static void displayConsistSummary() {
 
         System.out.println("\n--- Train Consist Summary ---");
         System.out.println("Total Bogies: " + train.size());
 
-        if (train.isEmpty()) {
-            System.out.println("Status: Empty Train (No bogies attached)");
-        } else {
-            System.out.println("Status: Train has bogies");
+        int totalCapacity = 0;
+
+        for (Bogie b : train) {
+            totalCapacity += b.getCapacity();
         }
+
+        System.out.println("Total Capacity: " + totalCapacity);
+
+        // UC4: Sorted IDs output
+        System.out.println("Sorted Bogie IDs: " + bogieIds);
     }
 }
