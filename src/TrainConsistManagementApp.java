@@ -1,14 +1,19 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 // Bogie Class
 class Bogie {
+    private int id;
     private String type;
     private int capacity;
 
-    public Bogie(String type, int capacity) {
+    public Bogie(int id, String type, int capacity) {
+        this.id = id;
         this.type = type;
         this.capacity = capacity;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getType() {
@@ -24,6 +29,7 @@ class Bogie {
 public class TrainConsistManagementApp {
 
     static List<Bogie> train = new ArrayList<>();
+    static Set<Integer> bogieIds = new HashSet<>(); // UC3
 
     public static void main(String[] args) {
 
@@ -31,10 +37,10 @@ public class TrainConsistManagementApp {
 
         initializeTrain();
 
-        // UC2: Add Passenger Bogies
-        addPassengerBogie(72);
-        addPassengerBogie(72);
-        addPassengerBogie(60);
+        // UC3: Adding bogies with unique IDs
+        addPassengerBogie(101, 72);
+        addPassengerBogie(102, 72);
+        addPassengerBogie(101, 60); // Duplicate ID
 
         displayConsistSummary();
     }
@@ -42,18 +48,27 @@ public class TrainConsistManagementApp {
     // UC1
     public static void initializeTrain() {
         train.clear();
+        bogieIds.clear();
         System.out.println("Train initialized successfully.");
     }
 
-    // UC2
-    public static void addPassengerBogie(int capacity) {
-        Bogie bogie = new Bogie("Passenger", capacity);
-        train.add(bogie);
+    // UC2 + UC3
+    public static void addPassengerBogie(int id, int capacity) {
 
-        System.out.println("Passenger bogie added with capacity: " + capacity);
+        // UC3: Check uniqueness using HashSet
+        if (bogieIds.contains(id)) {
+            System.out.println("❌ Bogie ID " + id + " already exists. Cannot add duplicate.");
+            return;
+        }
+
+        Bogie bogie = new Bogie(id, "Passenger", capacity);
+        train.add(bogie);
+        bogieIds.add(id);
+
+        System.out.println("✅ Passenger bogie added | ID: " + id + " | Capacity: " + capacity);
     }
 
-    // UC1
+    // Summary
     public static void displayConsistSummary() {
 
         System.out.println("\n--- Train Consist Summary ---");
@@ -66,5 +81,8 @@ public class TrainConsistManagementApp {
         }
 
         System.out.println("Total Capacity: " + totalCapacity);
+
+        // UC3: Show unique IDs
+        System.out.println("Unique Bogie IDs: " + bogieIds);
     }
 }
