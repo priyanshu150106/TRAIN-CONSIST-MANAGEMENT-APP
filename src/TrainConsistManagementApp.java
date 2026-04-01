@@ -30,8 +30,8 @@ public class TrainConsistManagementApp {
 
     static List<Bogie> train = new ArrayList<>();
 
-    // UC4: TreeSet maintains sorted unique IDs
-    static SortedSet<Integer> bogieIds = new TreeSet<>();
+    // UC5: Maintain insertion order
+    static Set<Integer> bogieIds = new LinkedHashSet<>();
 
     public static void main(String[] args) {
 
@@ -39,7 +39,7 @@ public class TrainConsistManagementApp {
 
         initializeTrain();
 
-        // Add bogies (unordered input)
+        // Adding bogies (order matters now)
         addPassengerBogie(105, 72);
         addPassengerBogie(101, 72);
         addPassengerBogie(103, 60);
@@ -55,10 +55,9 @@ public class TrainConsistManagementApp {
         System.out.println("Train initialized successfully.");
     }
 
-    // UC2 + UC3 + UC4
+    // UC2 + UC3 + UC5
     public static void addPassengerBogie(int id, int capacity) {
 
-        // TreeSet also prevents duplicates
         if (bogieIds.contains(id)) {
             System.out.println("❌ Bogie ID " + id + " already exists.");
             return;
@@ -85,7 +84,7 @@ public class TrainConsistManagementApp {
 
         System.out.println("Total Capacity: " + totalCapacity);
 
-        // UC4: Sorted IDs output
-        System.out.println("Sorted Bogie IDs: " + bogieIds);
+        // UC5: Insertion order maintained
+        System.out.println("Bogie IDs (Insertion Order): " + bogieIds);
     }
 }
