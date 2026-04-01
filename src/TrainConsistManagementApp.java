@@ -23,17 +23,18 @@ class Bogie {
     public int getCapacity() {
         return capacity;
     }
+
+    @Override
+    public String toString() {
+        return "Bogie[ID=" + id + ", Type=" + type + ", Capacity=" + capacity + "]";
+    }
 }
 
 // Main Class
 public class TrainConsistManagementApp {
 
     static List<Bogie> train = new ArrayList<>();
-
-    // UC5
     static Set<Integer> bogieIds = new LinkedHashSet<>();
-
-    // UC6: Map ID → Capacity
     static Map<Integer, Integer> bogieCapacityMap = new HashMap<>();
 
     public static void main(String[] args) {
@@ -48,9 +49,8 @@ public class TrainConsistManagementApp {
 
         displayConsistSummary();
 
-        // UC6: Lookup capacity
-        getCapacityById(101);
-        getCapacityById(999); // not موجود
+        // UC7: Sort by Capacity
+        sortBogiesByCapacity();
     }
 
     // UC1
@@ -73,21 +73,9 @@ public class TrainConsistManagementApp {
 
         train.add(bogie);
         bogieIds.add(id);
-
-        // UC6: Store in HashMap
         bogieCapacityMap.put(id, capacity);
 
         System.out.println("✅ Added Bogie | ID: " + id + " | Capacity: " + capacity);
-    }
-
-    // UC6: Get capacity by ID
-    public static void getCapacityById(int id) {
-
-        if (bogieCapacityMap.containsKey(id)) {
-            System.out.println("🔍 Capacity of Bogie " + id + " = " + bogieCapacityMap.get(id));
-        } else {
-            System.out.println("❌ Bogie ID " + id + " not found.");
-        }
     }
 
     // Summary
@@ -97,16 +85,23 @@ public class TrainConsistManagementApp {
         System.out.println("Total Bogies: " + train.size());
 
         int totalCapacity = 0;
-
         for (Bogie b : train) {
             totalCapacity += b.getCapacity();
         }
-
         System.out.println("Total Capacity: " + totalCapacity);
-
         System.out.println("Bogie IDs (Insertion Order): " + bogieIds);
-
-        // UC6: Show map
         System.out.println("Bogie → Capacity Map: " + bogieCapacityMap);
+    }
+
+    // UC7: Sort bogies by capacity
+    public static void sortBogiesByCapacity() {
+
+        // Comparator: sort ascending by capacity
+        train.sort(Comparator.comparingInt(Bogie::getCapacity));
+
+        System.out.println("\n--- Bogies Sorted by Capacity (Ascending) ---");
+        for (Bogie b : train) {
+            System.out.println(b);
+        }
     }
 }
