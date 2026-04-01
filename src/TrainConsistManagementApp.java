@@ -29,7 +29,9 @@ class Bogie {
 public class TrainConsistManagementApp {
 
     static List<Bogie> train = new ArrayList<>();
-    static Set<Integer> bogieIds = new HashSet<>(); // UC3
+
+    // UC4: TreeSet maintains sorted unique IDs
+    static SortedSet<Integer> bogieIds = new TreeSet<>();
 
     public static void main(String[] args) {
 
@@ -37,10 +39,11 @@ public class TrainConsistManagementApp {
 
         initializeTrain();
 
-        // UC3: Adding bogies with unique IDs
+        // Add bogies (unordered input)
+        addPassengerBogie(105, 72);
         addPassengerBogie(101, 72);
-        addPassengerBogie(102, 72);
-        addPassengerBogie(101, 60); // Duplicate ID
+        addPassengerBogie(103, 60);
+        addPassengerBogie(101, 80); // duplicate
 
         displayConsistSummary();
     }
@@ -52,12 +55,12 @@ public class TrainConsistManagementApp {
         System.out.println("Train initialized successfully.");
     }
 
-    // UC2 + UC3
+    // UC2 + UC3 + UC4
     public static void addPassengerBogie(int id, int capacity) {
 
-        // UC3: Check uniqueness using HashSet
+        // TreeSet also prevents duplicates
         if (bogieIds.contains(id)) {
-            System.out.println("❌ Bogie ID " + id + " already exists. Cannot add duplicate.");
+            System.out.println("❌ Bogie ID " + id + " already exists.");
             return;
         }
 
@@ -65,7 +68,7 @@ public class TrainConsistManagementApp {
         train.add(bogie);
         bogieIds.add(id);
 
-        System.out.println("✅ Passenger bogie added | ID: " + id + " | Capacity: " + capacity);
+        System.out.println("✅ Added Bogie | ID: " + id + " | Capacity: " + capacity);
     }
 
     // Summary
@@ -82,7 +85,7 @@ public class TrainConsistManagementApp {
 
         System.out.println("Total Capacity: " + totalCapacity);
 
-        // UC3: Show unique IDs
-        System.out.println("Unique Bogie IDs: " + bogieIds);
+        // UC4: Sorted IDs output
+        System.out.println("Sorted Bogie IDs: " + bogieIds);
     }
 }
