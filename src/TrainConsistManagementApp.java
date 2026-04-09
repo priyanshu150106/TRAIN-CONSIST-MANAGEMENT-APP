@@ -1,40 +1,53 @@
 import java.util.*;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+class GoodsBogie {
+    String id;
+    int weight;
+    int hazardLevel;
+
+    public GoodsBogie(String id, int weight, int hazardLevel) {
+        this.id = id;
+        this.weight = weight;
+        this.hazardLevel = hazardLevel;
+    }
+
+    @Override
+    public String toString() {
+        return id + "(W:" + weight + ", H:" + hazardLevel + ")";
+    }
+}
 
 public class TrainConsistManagementApp {
 
     public static void main(String[] args) {
 
-        String trainId = "TRN-1234";
-
-        List<String> cargoCodes = Arrays.asList(
-                "CG-AX12",
-                "CG-BY34",
-                "INVALID1",
-                "CG-1234"
+        List<GoodsBogie> bogies = Arrays.asList(
+                new GoodsBogie("GD1", 90, 3),
+                new GoodsBogie("GD2", 120, 2),
+                new GoodsBogie("GD3", 80, 6),
+                new GoodsBogie("GD4", 70, 2)
         );
 
-        // 🚆 Validate Train ID
-        boolean isTrainValid = validateTrainId(trainId);
-        System.out.println("Train ID Valid: " + isTrainValid);
+        System.out.println("All Goods Bogies: " + bogies);
 
-        // 📦 Validate Cargo Codes
-        List<String> validCargo = cargoCodes.stream()
-                .filter(TrainConsistManagementApp::validateCargoCode)
-                .toList();
+        // 🔥 Safety Filter
+        List<GoodsBogie> safeBogies = bogies.stream()
+                .filter(TrainConsistManagementApp::isSafe)
+                .collect(Collectors.toList());
 
-        System.out.println("Valid Cargo Codes: " + validCargo);
+        System.out.println("Safe Bogies: " + safeBogies);
+
+        // ❌ Unsafe Bogies
+        List<GoodsBogie> unsafeBogies = bogies.stream()
+                .filter(b -> !isSafe(b))
+                .collect(Collectors.toList());
+
+        System.out.println("Unsafe Bogies: " + unsafeBogies);
     }
 
-    // 🚆 Train ID Validation
-    private static boolean validateTrainId(String trainId) {
-        String regex = "TRN-\\d{4}";
-        return Pattern.matches(regex, trainId);
-    }
-
-    // 📦 Cargo Code Validation
-    private static boolean validateCargoCode(String code) {
-        String regex = "CG-[A-Z]{2}\\d{2}";
-        return Pattern.matches(regex, code);
+    // 🎯 Safety Rule
+    private static boolean isSafe(GoodsBogie b) {
+        return b.weight <= 100 && b.hazardLevel <= 5;
     }
 }
