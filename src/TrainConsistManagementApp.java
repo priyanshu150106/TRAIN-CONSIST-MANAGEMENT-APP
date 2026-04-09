@@ -1,20 +1,28 @@
 import java.util.*;
-import java.util.stream.Collectors;
 
-class GoodsBogie {
+class InvalidCapacityException extends Exception {
+    public InvalidCapacityException(String message) {
+        super(message);
+    }
+}
+
+class Bogie {
     String id;
-    int weight;
-    int hazardLevel;
+    int capacity;
 
-    public GoodsBogie(String id, int weight, int hazardLevel) {
+    public Bogie(String id, int capacity) throws InvalidCapacityException {
+        if (capacity <= 0 || capacity > 150) {
+            throw new InvalidCapacityException(
+                    "Invalid capacity for " + id + ": " + capacity
+            );
+        }
         this.id = id;
-        this.weight = weight;
-        this.hazardLevel = hazardLevel;
+        this.capacity = capacity;
     }
 
     @Override
     public String toString() {
-        return id + "(W:" + weight + ", H:" + hazardLevel + ")";
+        return id + "(Capacity:" + capacity + ")";
     }
 }
 
@@ -22,32 +30,17 @@ public class TrainConsistManagementApp {
 
     public static void main(String[] args) {
 
-        List<GoodsBogie> bogies = Arrays.asList(
-                new GoodsBogie("GD1", 90, 3),
-                new GoodsBogie("GD2", 120, 2),
-                new GoodsBogie("GD3", 80, 6),
-                new GoodsBogie("GD4", 70, 2)
-        );
+        List<Bogie> bogies = new ArrayList<>();
 
-        System.out.println("All Goods Bogies: " + bogies);
+        try {
+            bogies.add(new Bogie("S1", 72));
+            bogies.add(new Bogie("A1", 48));
+            bogies.add(new Bogie("GEN1", 0));   // ❌ Invalid
+            bogies.add(new Bogie("S2", 200));   // ❌ Invalid
+        } catch (InvalidCapacityException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
 
-        // 🔥 Safety Filter
-        List<GoodsBogie> safeBogies = bogies.stream()
-                .filter(TrainConsistManagementApp::isSafe)
-                .collect(Collectors.toList());
-
-        System.out.println("Safe Bogies: " + safeBogies);
-
-        // ❌ Unsafe Bogies
-        List<GoodsBogie> unsafeBogies = bogies.stream()
-                .filter(b -> !isSafe(b))
-                .collect(Collectors.toList());
-
-        System.out.println("Unsafe Bogies: " + unsafeBogies);
-    }
-
-    // 🎯 Safety Rule
-    private static boolean isSafe(GoodsBogie b) {
-        return b.weight <= 100 && b.hazardLevel <= 5;
+        System.out.println("Valid Bogies: " + bogies);
     }
 }
