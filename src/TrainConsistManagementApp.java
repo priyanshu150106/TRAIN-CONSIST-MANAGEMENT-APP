@@ -1,53 +1,49 @@
 import java.util.*;
-import java.util.stream.Collectors;
-
-class GoodsBogie {
-    String id;
-    int weight;
-    int hazardLevel;
-
-    public GoodsBogie(String id, int weight, int hazardLevel) {
-        this.id = id;
-        this.weight = weight;
-        this.hazardLevel = hazardLevel;
-    }
-
-    @Override
-    public String toString() {
-        return id + "(W:" + weight + ", H:" + hazardLevel + ")";
-    }
-}
+import java.util.stream.*;
 
 public class TrainConsistManagementApp {
 
     public static void main(String[] args) {
 
-        List<GoodsBogie> bogies = Arrays.asList(
-                new GoodsBogie("GD1", 90, 3),
-                new GoodsBogie("GD2", 120, 2),
-                new GoodsBogie("GD3", 80, 6),
-                new GoodsBogie("GD4", 70, 2)
-        );
+        List<String> bogies = new ArrayList<>();
 
-        System.out.println("All Goods Bogies: " + bogies);
+        // 🔥 Create large dataset (for real comparison)
+        for (int i = 1; i <= 100000; i++) {
+            bogies.add("S" + i);
+            bogies.add("A" + i);
+            bogies.add("GEN" + i);
+        }
 
-        // 🔥 Safety Filter
-        List<GoodsBogie> safeBogies = bogies.stream()
-                .filter(TrainConsistManagementApp::isSafe)
-                .collect(Collectors.toList());
+        // ⏱️ LOOP APPROACH
+        long startLoop = System.nanoTime();
 
-        System.out.println("Safe Bogies: " + safeBogies);
+        int totalSeatsLoop = 0;
+        for (String b : bogies) {
+            totalSeatsLoop += getSeatCount(b);
+        }
 
-        // ❌ Unsafe Bogies
-        List<GoodsBogie> unsafeBogies = bogies.stream()
-                .filter(b -> !isSafe(b))
-                .collect(Collectors.toList());
+        long endLoop = System.nanoTime();
 
-        System.out.println("Unsafe Bogies: " + unsafeBogies);
+        // ⏱️ STREAM APPROACH
+        long startStream = System.nanoTime();
+
+        int totalSeatsStream = bogies.stream()
+                .mapToInt(TrainConsistManagementApp::getSeatCount)
+                .sum();
+
+        long endStream = System.nanoTime();
+
+        // 📊 Results
+        System.out.println("Total Seats (Loop): " + totalSeatsLoop);
+        System.out.println("Total Seats (Stream): " + totalSeatsStream);
+
+        System.out.println("Loop Time (ns): " + (endLoop - startLoop));
+        System.out.println("Stream Time (ns): " + (endStream - startStream));
     }
 
-    // 🎯 Safety Rule
-    private static boolean isSafe(GoodsBogie b) {
-        return b.weight <= 100 && b.hazardLevel <= 5;
+    private static int getSeatCount(String bogie) {
+        if (bogie.startsWith("S")) return 72;
+        if (bogie.startsWith("A")) return 48;
+        return 100;
     }
 }
