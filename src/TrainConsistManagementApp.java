@@ -1,28 +1,40 @@
 import java.util.*;
-import java.util.stream.*;
+import java.util.regex.Pattern;
 
 public class TrainConsistManagementApp {
 
     public static void main(String[] args) {
 
-        List<String> bogies = Arrays.asList(
-                "S1", "S2", "A1", "GEN1", "S3"
+        String trainId = "TRN-1234";
+
+        List<String> cargoCodes = Arrays.asList(
+                "CG-AX12",
+                "CG-BY34",
+                "INVALID1",
+                "CG-1234"
         );
 
-        System.out.println("Bogies: " + bogies);
+        // 🚆 Validate Train ID
+        boolean isTrainValid = validateTrainId(trainId);
+        System.out.println("Train ID Valid: " + isTrainValid);
 
-        // 🔥 Reduce to calculate total seats
-        int totalSeats = bogies.stream()
-                .map(b -> getSeatCount(b))
-                .reduce(0, (a, b) -> a + b);
+        // 📦 Validate Cargo Codes
+        List<String> validCargo = cargoCodes.stream()
+                .filter(TrainConsistManagementApp::validateCargoCode)
+                .toList();
 
-        System.out.println("Total Seats: " + totalSeats);
+        System.out.println("Valid Cargo Codes: " + validCargo);
     }
 
-    // 🎯 Seat logic
-    private static int getSeatCount(String bogie) {
-        if (bogie.startsWith("S")) return 72;
-        if (bogie.startsWith("A")) return 48;
-        return 100;
+    // 🚆 Train ID Validation
+    private static boolean validateTrainId(String trainId) {
+        String regex = "TRN-\\d{4}";
+        return Pattern.matches(regex, trainId);
     }
-}"
+
+    // 📦 Cargo Code Validation
+    private static boolean validateCargoCode(String code) {
+        String regex = "CG-[A-Z]{2}\\d{2}";
+        return Pattern.matches(regex, code);
+    }
+}
