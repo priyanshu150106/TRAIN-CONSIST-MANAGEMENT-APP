@@ -1,29 +1,28 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.stream.*;
 
 public class TrainConsistManagementApp {
 
     public static void main(String[] args) {
 
-        String trainName = "Express";
-        String engine = "WAP-7";
+        List<String> bogies = Arrays.asList(
+                "S1", "S2", "A1", "GEN1", "S3"
+        );
 
-        List<String> bogies = new ArrayList<>();
+        System.out.println("Bogies: " + bogies);
 
-        bogies.add("S1");
-        bogies.add("S2");
-        bogies.add("A1");
-        bogies.add("GEN1");
-        bogies.add("S3");
+        // 🔥 Reduce to calculate total seats
+        int totalSeats = bogies.stream()
+                .map(b -> getSeatCount(b))
+                .reduce(0, (a, b) -> a + b);
 
-        System.out.println("All Bogies: " + bogies);
-
-        // 🔍 Filter only passenger bogies (Sleeper = S)
-        List<String> passengerBogies = bogies.stream()
-                .filter(b -> b.startsWith("S"))
-                .collect(Collectors.toList());
-
-        System.out.println("Passenger Bogies: " + passengerBogies);
+        System.out.println("Total Seats: " + totalSeats);
     }
-}
+
+    // 🎯 Seat logic
+    private static int getSeatCount(String bogie) {
+        if (bogie.startsWith("S")) return 72;
+        if (bogie.startsWith("A")) return 48;
+        return 100;
+    }
+}"
